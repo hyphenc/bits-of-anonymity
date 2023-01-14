@@ -4,29 +4,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>bits of anonymity</title>
 <style>
+#prompt > div > input {
+  min-width: 365px;
+}
 #bits {
   font-family: monospace;
   font-size: 1rem;
+  background: #2f2f2f;
+  padding: 0.6rem;
+  width: fit-content;
+  margin-bottom: 2rem;
+}
+#bitshave {
+  color: #8BC081;
+}
+#bitsgone {
+  color: #CB4C4E;
+}
+#p-smaller-set {
+  margin-bottom: 1rem;
+}
+body {
+  background: #202020;
+  color: #ebebeb;
+  margin-left: 0.5rem;
+}
+input {
+  background: #303030;
+  color: white;
 }
 </style>
 </head>
 <body>
 <h1>bits of anonymity</h1>
-<p id="bits">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</p>
+<p>your remaining anonymity:</p>
+<p id="bits"><span id="bitsgone"></span><span id="bitshave">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</span></p>
 <div id="prompt">
 <div>
-<label for="name">name: </label>
+<label for="name">name:</label><br>
 <input type="text" id="p-name" name="name" placeholder="give this de-anonymization a name" required>
 </div>
 <div>
-<label for="bigger-set">bigger set: </label>
+<label for="bigger-set">you are one of: </label><br>
 <input id="p-bigger-set" value="7900000000" type="numeric" name="bigger-set" placeholder="initially the human population">
 </div>
 <div>
-<label for="smaller-set">smaller set: </label>
-<input id="p-smaller-set" type="numeric" name="bigger-set" placeholder="narrows you down to one of X people">
+<label for="smaller-set">this narrows you down to one of: </label><br>
+<input id="p-smaller-set" type="numeric" name="bigger-set" placeholder="enter a number">
 </div>
 <button onclick="calc()">submit</button>
+<button onclick="reset()">reset</button>
 </div>
 
 <div id="log"></div>
@@ -36,6 +63,8 @@ const log = document.getElementById("log");
 const bigger = document.getElementById("p-bigger-set");
 const smaller = document.getElementById("p-smaller-set");
 const name = document.getElementById("p-name");
+const bitsgone = document.getElementById("bitsgone");
+const bitshave = document.getElementById("bitshave");
 const initialbits = 33; // will suffice for some time
 
 function calc() {
@@ -57,13 +86,22 @@ function calc() {
 
   str = "<p>you had "+had+" bits of anonymity. "+name.value+" made you lose "+diff+".</p>"
   log.insertAdjacentHTML("afterbegin", str);
-  bits.innerHTML = "A".repeat(now).padStart(initialbits, "x");
+  bitsgone.innerHTML = "x".repeat(initialbits-now);
+  bitshave.innerHTML = "A".repeat(now);
 
   bigger.value = smaller.value;
-  smaller.value = "";
+  name.value = smaller.value = "";
 }
 
-
+function reset() {
+  bigger.value = 7900000000; // TODO get this from some api
+  name.value = smaller.value = "";
+  bitsgone.innerHTML = "";
+  bitshave.innerHTML = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+  if(log.innerHTML != "" && log.innerHTML.slice(0,12) != "<br><hr><br>") { 
+    log.insertAdjacentHTML("afterbegin", "<br><hr><br>");
+  }
+}
 </script>
 </body>
 </html>
